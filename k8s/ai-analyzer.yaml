@@ -1,0 +1,98 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ai-analyzer
+  namespace: monitoring
+  labels:
+    app: ai-analyzer
+    component: ai-monitoring
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: ai-analyzer
+  template:
+    metadata:
+      labels:
+        app: ai-analyzer
+        component: ai-monitoring
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8000"
+    spec:
+      containers:
+      - name: analyzer
+        image: local/ai-analyzer:v2
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8000
+          name: metrics
+          protocol: TCP
+        env:
+        # Исправленные настройки подключения
+        - name: OLLAMA_URL
+          value: "http://ollama.monitoring.svc.cluster.local:11434"
+        - name: PROMETHEUS_URL
+          value: "http://prometheus-operated.monitoring.svc.cluster.local:9090"
+
+        # Остальные параметры без изменений
+        - name: METRICS_PORT
+          value: "8000"
+        - name: ANALYSIS_INTERVAL
+          value: "300"
+        - name: LOG_LEVEL
+          value: "INFO"
+        - name: MODEL_NAME
+          value: "gemma:2b-instruct"
+        - name: TIMEOUT
+          value: "60"
+        - name: CPU_USAGE_THRESHOLD
+          value: "80"
+        - name: RAM_USAGE_THRESHOLD
+          value: "85"
+
+        resources:
+          requests:
+            cpu: "500m"
+            memory: "512Mi"
+          limits:
+            cpu: "1"
+            memory: "1Gi"
+        livenessProbe:
+          httpGet:
+            path: /metrics
+            port: 8000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /metrics
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          timeoutSeconds: 5
+      restartPolicy: Always
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ai-analyzer
+  namespace: monitoring
+  labels:
+    app: ai-analyzer
+    component: ai-monitoring
+spec:
+  selector:
+    app: ai-analyzer
+  ports:
+  - name: metrics
+    port: 8000
+    targetPort: 8000
+    protocol: TCP
+  type: ClusterIP

@@ -1,0 +1,27 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: ai-alert-rules
+  namespace: monitoring
+  labels:
+    release: prometheus  # Должен совпадать с вашим релизом Prometheus
+spec:
+  groups:
+  - name: ai-analysis
+    rules:
+    - alert: HighSystemLoad
+      expr: ai_analysis_score > 80
+      for: 5m
+      labels:
+        severity: critical
+      annotations:
+        summary: "Высокая нагрузка системы ({{ $value }} баллов)"
+        description: "CPU: {{ printf \"%.2f\" (query \"ai_reported_cpu_usage\") }}%, RAM: {{ printf \"%.2f\" (query \"ai_reported_ram_usage\") }}%"
+
+    - alert: ServiceDegraded
+      expr: ai_service_state == 2  # 2 = critical
+      for: 2m
+      labels:
+        severity: warning
+      annotations:
+        summary: "Сервис в критическом состоянии"

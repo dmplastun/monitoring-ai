@@ -1,0 +1,47 @@
+# stress-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stress-generator
+  namespace: monitoring
+  labels:
+    app: stress
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: stress
+  template:
+    metadata:
+      labels:
+        app: stress
+    spec:
+      containers:
+        - name: stress
+          image: polinux/stress
+          command: ["stress"]                    # основная команда
+          args: ["--cpu", "1", "--vm", "1", "--vm-bytes", "512M", "--timeout", "100s"]  # аргументы
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "1"
+              memory: "512Mi"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: stress-service
+  namespace: monitoring
+  labels:
+    app: stress
+spec:
+  selector:
+    app: stress
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080  # не используется напрямую, но может быть полезен в будущем
+  type: ClusterIP
