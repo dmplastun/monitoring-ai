@@ -31,9 +31,12 @@ Perfect for DevOps engineers, SRE teams, and anyone looking to bring AIOps capab
 ---
 
 ## 🧩 Architecture Overvie
+
 +------------------+       +-------------------+       +-----------------------------+       +----------------------------+
 |  Servers / Node  | ----> |    Prometheus     | ----> |   AI Analyzer (Ollama API)  | ----> |      Grafana Dashboard     |
 +------------------+       +-------------------+       +-----------------------------+       +----------------------------+
+
+
 
 
 ---
