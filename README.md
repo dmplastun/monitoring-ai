@@ -116,7 +116,7 @@ MIT License – free to use and modify.
 
 If you have questions, suggestions, or want to contribute, feel free to open an issue or reach out directly: 
 
-📧 dmitrij.plastun@example.com 
+📧 dmitrij.plastun@gmail.com 
  
 🚧 Roadmap 
 
