@@ -111,21 +111,13 @@ You can:
 
 📎 License 
 
-MIT License – free to use and modify. 
+MIT License – free to use and modify.
+
 📬 Contact 
 
 If you have questions, suggestions, or want to contribute, feel free to open an issue or reach out directly: 
 
 📧 dmitrij.plastun@gmail.com 
- 
-🚧 Roadmap 
-
-    Telegram/Slack notification bot  
-    OpenTelemetry support  
-    Predictive failure detection module  
-    Web UI for prompt/model management  
-    Loki-based log analysis extension
- 
 
 If you like this project, please give it a ⭐️ on GitHub. It helps attract contributors and users. 
 
